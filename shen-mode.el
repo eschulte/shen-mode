@@ -87,7 +87,7 @@
          "\\>")
        1 font-lock-builtin-face)
       ;; comments
-      ("/\\* [^\000]*? \\*/" 0 font-lock-comment-face)))
+      ("\\\\\\*[^\000]*?\\*\\\\" 0 font-lock-comment-face)))
   "Default expressions to highlight in Shen mode.")
 
 ;; ;; we can just let this inherit from prog-mode for now
@@ -106,12 +106,12 @@
      (indent-line-function . lisp-indent-line)
      (lisp-indent-function . lisp-indent-function)
      (parse-sexp-ignore-comments . t)
-     (comment-start . "/*")
-     (comment-end . "*/")
-     (comment-add . 1)
-     (comment-column . 40)
+     (comment-start . "\\* ")
+     (comment-end . " *\\")
+     (comment-add . 0)
+     (comment-column . 32)
      (parse-sexp-ignore-comments . t)
-     (comment-use-global-state . t)
+     (comment-use-global-state . nil)
      (font-lock-defaults
       . (shen-font-lock-keywords
          nil nil (("+-*/.<>=!?$%_&~^:@" . "w")) nil
