@@ -100,6 +100,54 @@
 ;;   (let ((table (make-syntax-table))) table)
 ;;   "Syntax table to use in shen-mode.")
 
+;; Copied from qi-mode, which in turn is from scheme-mode and from lisp-mode
+(defun shen-indent-function (indent-point state)
+  (let ((normal-indent (current-column)))
+    (goto-char (1+ (elt state 1)))
+    (parse-partial-sexp (point) calculate-lisp-indent-last-sexp 0 t)
+    (if (and (elt state 2)
+             (not (looking-at "\\sw\\|\\s_")))
+        ;; car of form doesn't seem to be a symbol
+        (progn
+          (if (not (> (save-excursion (forward-line 1) (point))
+                      calculate-lisp-indent-last-sexp))
+              (progn (goto-char calculate-lisp-indent-last-sexp)
+                     (beginning-of-line)
+                     (parse-partial-sexp (point)
+					 calculate-lisp-indent-last-sexp 0 t)))
+          ;; Indent under the list or under the first sexp on the same
+          ;; line as calculate-lisp-indent-last-sexp.  Note that first
+          ;; thing on that line has to be complete sexp since we are
+          ;; inside the innermost containing sexp.
+          (backward-prefix-chars)
+          (current-column))
+      (let ((function (buffer-substring (point)
+					(progn (forward-sexp 1) (point))))
+	    method)
+	(setq method (or (get (intern-soft function) 'shen-indent-function)
+			 (get (intern-soft function) 'shen-indent-hook)))
+	(cond ((or (eq method 'defun)
+		   (and (null method)
+			(> (length function) 3)
+			(string-match "\\`def" function)))
+	       (lisp-indent-defform state indent-point))
+	      ((integerp method)
+	       (lisp-indent-specform method state
+				     indent-point normal-indent))
+	      (method
+		(funcall method state indent-point normal-indent)))))))
+
+(defun shen-let-indent (state indent-point normal-indent)
+  (let ((edge (- (current-column) 2)))
+    (goto-char indent-point) (skip-chars-forward " \t")
+    (if (looking-at "[-a-zA-Z0-9+*/?!@$%^&_:~]")
+      ;; deeper indent because we're still defining local variables
+      (lisp-indent-specform 5 state indent-point normal-indent)
+      ;; shallow indent because we're in the body
+      edge)))
+
+(put 'let 'shen-indent-function 'shen-let-indent)
+
 (define-derived-mode shen-mode prog-mode "shen"
   "Major mode for editing Shen code."
   ;; set a variety of local variables
@@ -109,7 +157,7 @@
    '((adaptive-fill-mode . nil)
      (fill-paragraph-function . lisp-fill-paragraph)
      (indent-line-function . lisp-indent-line)
-     (lisp-indent-function . lisp-indent-function)
+     (lisp-indent-function . shen-indent-function)
      (parse-sexp-ignore-comments . t)
      (comment-start . "\\* ")
      (comment-end . " *\\")
