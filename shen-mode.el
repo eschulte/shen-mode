@@ -67,21 +67,32 @@
       (,(concat
          "("
          (regexp-opt
-          (append
-           '("intern" "function")                ; symbols
-           '("pos" "tlstr" "cn" "str" "string?") ; strings
-           '("set" "value")                      ; assignment
-           '("cons" "hd" "tl" "cons?")                         ; lists
-           '("absvector" "address->" "<-address" "absvector?") ; vector
-           '("pr" "read-byte" "open" "close")             ; stream
-           '("get-time")                                  ; time
-           '("+" "-" "*" "/" ">" "<" ">=" "<=" "number?") ; arithmetic
-           '("fst" "snd" "tupple?")                       ; tuple
-           '("@s" "@v" "@p")
-           '("type")
-           '("put" "get")               ; property lists
-           '("simple-error" "error" "trap-error" "error-to-string") ; error
-           )
+          (mapcar
+           (lambda (it) (format "%s" it))
+           (append
+            '(intern function)                          ; symbols
+            '(pos tlstr cn str string?)                 ; strings
+            '(set value)                                ; assignment
+            '(cons hd tl cons?)                         ; lists
+            '(absvector address-> <-address absvector?) ; vector
+            '(pr read-byte open close)                  ; stream
+            '(get-time)                                 ; time
+            '(+ - * / > < >= <= number?)                ; arithmetic
+            '(fst snd tupple?)                          ; tuple
+            '(@s @v @p)
+            '(put get)                  ; property lists
+            '(simple-error error trap-error error-to-string) ; error
+            ;; predicates
+            (mapcar
+             (lambda (it) (format "%s?" it))
+             '(boolean character complex congruent cons element empty float
+                       integer number provable rational solved string symbol
+                       tuple variable))
+            ;; misc functions
+            '(append apply apt-credits apt-prompt cd collect concat difference
+                     eval explode fix gensym head include include-all-but
+                     inferences input length lineread)
+            ))
           t)
          "\\>")
        1 font-lock-builtin-face)
