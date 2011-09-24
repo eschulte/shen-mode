@@ -85,8 +85,15 @@
              "stinput" "home-directory" "version"
              "maximum-print-sequence-size" "printer" "macros")) t)
          "\\>")
-       1 font-lock-builtin-face)))
+       1 font-lock-builtin-face)
+      ;; comments
+      ("/\\* [^\000]*? \\*/" 0 font-lock-comment-face)))
   "Default expressions to highlight in Shen mode.")
+
+;; ;; we can just let this inherit from prog-mode for now
+;; (defvar shen-mode-syntax-table
+;;   (let ((table (make-syntax-table))) table)
+;;   "Syntax table to use in shen-mode.")
 
 (define-derived-mode shen-mode prog-mode "shen"
   "Major mode for editing Shen code."
