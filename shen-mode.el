@@ -49,6 +49,10 @@
                 "\\(\\sw+\\)?")
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
+      ;; data types
+      ("(\\(datatype\\)\\>[ \t]*(?\\(\\sw+\\)?"
+       (1 font-lock-keyword-face)
+       (2 font-lock-type-face nil t))
       ;; variables
       ("\\<\\([A-Z]\\w*\\)\\>" . font-lock-variable-name-face)
       ;; control structures
