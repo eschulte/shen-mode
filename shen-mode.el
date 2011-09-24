@@ -37,7 +37,9 @@
 (defconst shen-font-lock-keywords
   (eval-when-compile
     `( ;; definitions
-      (,(concat "(\\(" (regexp-opt '("defun" "defmacro" "lambda" "/."))
+      (,(concat "(\\("
+                (regexp-opt
+                 '("defun" "defmacro" "lambda" "/." "define" "defprolog"))
                 "\\)\\>"
                 "[ \t]*(?"
                 "\\(\\sw+\\)?")
@@ -62,9 +64,26 @@
            '("simple-error" "trap-error" "error-to-string")    ; error
            '("cons" "hd" "tl" "cons?")                         ; lists
            '("absvector" "address->" "<-address" "absvector?") ; vector
-           '("pr" "read-byte" "open" "close")                 ; stream
-           '("get-time")                                      ; time
-           '("+" "-" "*" "/" ">" "<" ">=" "<=" "number?")) t) ; arithmetic
+           '("pr" "read-byte" "open" "close")             ; stream
+           '("get-time")                                  ; time
+           '("+" "-" "*" "/" ">" "<" ">=" "<=" "number?") ; arithmetic
+           '("fst" "snd" "tupple?")                       ; tuple
+           '("@s" "@v" "@p")
+           '("type")
+           '("put" "get")               ; property lists
+           '("simple-error" "error" "trap-error" "error-to-string") ; error
+           )
+          t)
+         "\\>")
+       1 font-lock-builtin-face)
+      ;; external global variables
+      (,(concat
+         (regexp-opt
+          (mapcar
+           (lambda (cnst) (format "*%s*" cnst))
+           '("language" "implementation" "port" "porters"
+             "stinput" "home-directory" "version"
+             "maximum-print-sequence-size" "printer" "macros")) t)
          "\\>")
        1 font-lock-builtin-face)))
   "Default expressions to highlight in Shen mode.")
@@ -80,12 +99,10 @@
      (indent-line-function . lisp-indent-line)
      (lisp-indent-function . lisp-indent-function)
      (parse-sexp-ignore-comments . t)
-     (outline-regexp . ";;; \\|(....")
-     (comment-start . ";")
-     (comment-end . "")
+     (comment-start . "/*")
+     (comment-end . "*/")
      (comment-add . 1)
      (comment-column . 40)
-     (font-lock-comment-start-skip . ";+ *")
      (parse-sexp-ignore-comments . t)
      (comment-use-global-state . t)
      (font-lock-defaults
