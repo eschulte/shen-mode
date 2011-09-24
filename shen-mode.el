@@ -22,6 +22,8 @@
 ;; Boston, MA 02111-1307, USA.
 
 ;;; Code:
+(require 'lisp-mode)
+
 (defcustom shen-mode-hook nil
   "Normal hook run when entering `shen-mode'."
   :type 'hook
@@ -74,14 +76,18 @@
      (dolist (pair local-vars)
        (set (make-local-variable (car pair)) (cdr pair))))
    '((adaptive-fill-mode . nil)
+     (fill-paragraph-function . lisp-fill-paragraph)
      (indent-line-function . lisp-indent-line)
+     (lisp-indent-function . lisp-indent-function)
      (parse-sexp-ignore-comments . t)
      (outline-regexp . ";;; \\|(....")
      (comment-start . ";")
+     (comment-end . "")
      (comment-add . 1)
+     (comment-column . 40)
      (font-lock-comment-start-skip . ";+ *")
      (parse-sexp-ignore-comments . t)
-     (lisp-indent-function . lisp-indent-function)
+     (comment-use-global-state . t)
      (font-lock-defaults
       . (shen-font-lock-keywords
          nil nil (("+-*/.<>=!?$%_&~^:@" . "w")) nil

@@ -1,0 +1,9 @@
+The beginnings of an Emacs major mode for shen.
+
+For more information on shen see
+  http://www.lambdassociates.org/specification/shen_1.7.htm
+
+To use put something like the following in your .emacs
+  (require 'shen-mode)
+  (add-hook 'shen-mode-hook paredit-mode)
+  (add-to-list 'auto-mode-alist '("\\.shen\\'" . shen-mode))
