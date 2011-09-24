@@ -21,6 +21,10 @@
 ;; the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 ;; Boston, MA 02111-1307, USA.
 
+;;; Commentary:
+
+;; This file borrows from qi-mode, clojure-mode and scheme-mode
+
 ;;; Code:
 (require 'lisp-mode)
 
@@ -45,6 +49,8 @@
                 "\\(\\sw+\\)?")
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
+      ;; variables
+      ("\\<\\([A-Z]\\w*\\)\\>" . font-lock-variable-name-face)
       ;; control structures
       (,(concat
          "("
@@ -61,7 +67,6 @@
            '("intern" "function")                ; symbols
            '("pos" "tlstr" "cn" "str" "string?") ; strings
            '("set" "value")                      ; assignment
-           '("simple-error" "trap-error" "error-to-string")    ; error
            '("cons" "hd" "tl" "cons?")                         ; lists
            '("absvector" "address->" "<-address" "absvector?") ; vector
            '("pr" "read-byte" "open" "close")             ; stream
