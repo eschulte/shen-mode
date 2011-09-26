@@ -23,6 +23,8 @@
 
 ;;; Commentary:
 
+;; Taken directly from the Qi documentation by Dr. Mark Tarver.
+
 ;; Some of these may actually be Qi functions.
 
 ;;; Code:
@@ -152,6 +154,15 @@
     (== "A --> B --> boolean" "Equal to.")
     (>= "number --> number --> boolean" "Greater than or equal to.")
     (<= "number --> number --> boolean" "Less than or equal to.")))
+
+(defun shen-functions-as-html ()
+  (concat "<html><body>\n"
+          (mapconcat
+           (lambda (spec)
+             (format "<dl><dt>%s [<i>%s</i>]</dt><dd>%s</dd></dl>"
+                     (car spec) (cadr spec) (caddr spec)))
+           shen-functions "\n")
+          "\n</body></html>"))
 
 (provide 'shen-functions)
 ;;; shen-functions.el ends here
