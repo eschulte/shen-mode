@@ -7,3 +7,4 @@ To use put something like the following in your .emacs
   (require 'shen-mode)
   (add-hook 'shen-mode-hook 'paredit-mode) ; <- entirely optional
   (add-to-list 'auto-mode-alist '("\\.shen\\'" . shen-mode))
+  (require 'inf-shen) ; <- for interaction with an external shen process
