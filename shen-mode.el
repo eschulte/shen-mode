@@ -123,10 +123,11 @@
               changed t)))
     changed))
 
-;; ;; we can just let this inherit from prog-mode for now
-;; (defvar shen-mode-syntax-table
-;;   (let ((table (make-syntax-table))) table)
-;;   "Syntax table to use in shen-mode.")
+(defvar shen-mode-syntax-table
+  (let ((table (make-syntax-table)))
+    (modify-syntax-entry ?- "w" table)
+    table)
+  "Syntax table to use in shen-mode.")
 
 ;; Copied from qi-mode, which in turn is from scheme-mode and from lisp-mode
 (defun shen-indent-function (indent-point state)
