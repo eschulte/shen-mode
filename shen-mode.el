@@ -27,8 +27,10 @@
 
 ;;; Code:
 (require 'lisp-mode)
+(require 'shen-functions)
+(require 'imenu)
 
-(defcustom shen-mode-hook nil
+(defcustom shen-mode-hook '(turn-on-eldoc-mode)
   "Normal hook run when entering `shen-mode'."
   :type 'hook
   :group 'shen)
@@ -163,13 +165,29 @@
 
 (put 'let 'shen-indent-function 'shen-let-indent)
 
+(defun shen-current-function ()
+  (save-excursion
+    (backward-up-list)
+    (forward-char 1)
+    (thing-at-point 'word)))
+
+(defun shen-mode-eldoc ()
+  (let ((func (assoc (intern (shen-current-function)) shen-functions)))
+    (format "%s[%s]: %s"
+            (propertize (symbol-name (car func))
+                        'face 'font-lock-function-name-face)
+            (cadr func) (caddr func))))
+
+(defvar shen-imenu-generic-expression
+  '(("Functions" "^\\s-*(\\(define\\)" 1)))
+
 (define-derived-mode shen-mode prog-mode "shen"
   "Major mode for editing Shen code."
   ;; set a variety of local variables
   ((lambda (local-vars)
      (dolist (pair local-vars)
        (set (make-local-variable (car pair)) (cdr pair))))
-   '((adaptive-fill-mode . nil)
+   `((adaptive-fill-mode . nil)
      (fill-paragraph-function . lisp-fill-paragraph)
      (indent-line-function . lisp-indent-line)
      (lisp-indent-function . shen-indent-function)
@@ -180,6 +198,9 @@
      (comment-column . 32)
      (parse-sexp-ignore-comments . t)
      (comment-use-global-state . nil)
+     (eldoc-documentation-function . shen-mode-eldoc)
+     (imenu-case-fold-search . t)
+     (imenu-generic-expression . ,shen-imenu-generic-expression)
      (font-lock-defaults
       . (shen-font-lock-keywords
          nil nil (("+-*/.<>=!?$%_&~^:@" . "w")) nil
