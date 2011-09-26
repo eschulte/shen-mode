@@ -42,7 +42,9 @@
 
 (defconst shen-font-lock-keywords
   (eval-when-compile
-    `( ;; definitions
+    `(;; comments
+      ("\\\\\\*[^\000]*?\\*\\\\" 0 font-lock-comment-face)
+      ;; definitions
       (,(concat "(\\("
                 (regexp-opt
                  '("defun" "defmacro" "lambda" "/." "define" "defprolog"))
@@ -104,10 +106,22 @@
              "stinput" "home-directory" "version"
              "maximum-print-sequence-size" "printer" "macros")) t)
          "\\>")
-       1 font-lock-builtin-face)
-      ;; comments
-      ("\\\\\\*[^\000]*?\\*\\\\" 0 font-lock-comment-face)))
+       1 font-lock-builtin-face)))
   "Default expressions to highlight in Shen mode.")
+
+(defun shen-font-lock-extend-region-comment ()
+  "Move fontification boundaries to contain whole comments."
+  (let ((changed nil))
+    (goto-char font-lock-beg)
+    (when (and (re-search-forward "\\\\\\*" font-lock-end t)
+               (< (match-beginning 0) font-lock-beg))
+      (setq font-lock-beg (match-beginning 0)
+            changed t)
+      (when (and (re-search-forward "\\*\\\\" nil t)
+                 (> (match-end 0) font-lock-end))
+        (setq font-lock-end (match-end 0)
+              changed t)))
+    changed))
 
 ;; ;; we can just let this inherit from prog-mode for now
 ;; (defvar shen-mode-syntax-table
@@ -121,20 +135,20 @@
     (parse-partial-sexp (point) calculate-lisp-indent-last-sexp 0 t)
     (if (and (elt state 2)
              (not (looking-at "\\sw\\|\\s_")))
-        ;; car of form doesn't seem to be a symbol
-        (progn
-          (if (not (> (save-excursion (forward-line 1) (point))
-                      calculate-lisp-indent-last-sexp))
-              (progn (goto-char calculate-lisp-indent-last-sexp)
-                     (beginning-of-line)
-                     (parse-partial-sexp (point)
-					 calculate-lisp-indent-last-sexp 0 t)))
-          ;; Indent under the list or under the first sexp on the same
-          ;; line as calculate-lisp-indent-last-sexp.  Note that first
-          ;; thing on that line has to be complete sexp since we are
-          ;; inside the innermost containing sexp.
-          (backward-prefix-chars)
-          (current-column))
+      ;; car of form doesn't seem to be a symbol
+      (progn
+        (if (not (> (save-excursion (forward-line 1) (point))
+                    calculate-lisp-indent-last-sexp))
+          (progn (goto-char calculate-lisp-indent-last-sexp)
+                 (beginning-of-line)
+                 (parse-partial-sexp (point)
+                                     calculate-lisp-indent-last-sexp 0 t)))
+        ;; Indent under the list or under the first sexp on the same
+        ;; line as calculate-lisp-indent-last-sexp.  Note that first
+        ;; thing on that line has to be complete sexp since we are
+        ;; inside the innermost containing sexp.
+        (backward-prefix-chars)
+        (current-column))
       (let ((function (buffer-substring (point)
 					(progn (forward-sexp 1) (point))))
 	    method)
@@ -149,7 +163,7 @@
 	       (lisp-indent-specform method state
 				     indent-point normal-indent))
 	      (method
-		(funcall method state indent-point normal-indent)))))))
+               (funcall method state indent-point normal-indent)))))))
 
 (defun shen-let-indent (state indent-point normal-indent)
   (let ((edge (- (current-column) 2)))
@@ -200,12 +214,10 @@
      (eldoc-documentation-function . shen-mode-eldoc)
      (imenu-case-fold-search . t)
      (imenu-generic-expression . ,shen-imenu-generic-expression)
-     (font-lock-defaults
-      . (shen-font-lock-keywords
-         nil nil (("+-*/.<>=!?$%_&~^:@" . "w")) nil
-         (font-lock-mark-block-function . mark-defun)
-         (font-lock-syntactic-face-function
-          . lisp-font-lock-syntactic-face-function))))))
+     (mode-name . "Shen")
+     (font-lock-defaults . (shen-font-lock-keywords))))
+  (add-to-list 'font-lock-extend-region-functions
+               'shen-font-lock-extend-region-comment t))
 
 (provide 'shen-mode)
 ;;; shen-mode.el ends here
