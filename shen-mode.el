@@ -163,13 +163,14 @@
 (put 'let 'shen-indent-function 'shen-let-indent)
 
 (defun shen-current-function ()
-  (save-excursion
-    (backward-up-list)
-    (forward-char 1)
-    (thing-at-point 'word)))
+  (ignore-errors
+    (save-excursion
+      (backward-up-list)
+      (forward-char 1)
+      (thing-at-point 'word))))
 
 (defun shen-mode-eldoc ()
-  (let ((func (assoc (intern (shen-current-function)) shen-functions)))
+  (let ((func (assoc (intern (or (shen-current-function) "")) shen-functions)))
     (when func
       (format "%s[%s]: %s"
               (propertize (symbol-name (car func))
