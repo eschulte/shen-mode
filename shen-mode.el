@@ -91,10 +91,7 @@
                        integer number provable rational solved string symbol
                        tuple variable))
             ;; misc functions
-            '(append apply apt-credits apt-prompt cd collect concat difference
-                     eval explode fix gensym head include include-all-but
-                     inferences input length lineread)
-            ))
+            (mapcar #'car shen-functions)))
           t)
          "\\>")
        1 font-lock-builtin-face)
