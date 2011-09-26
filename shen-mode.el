@@ -219,5 +219,7 @@
   (add-to-list 'font-lock-extend-region-functions
                'shen-font-lock-extend-region-comment t))
 
+(add-to-list 'auto-mode-alist '("\\.shen\\'" . shen-mode))
+
 (provide 'shen-mode)
 ;;; shen-mode.el ends here
