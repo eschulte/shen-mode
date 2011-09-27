@@ -196,7 +196,8 @@
 (defvar shen-imenu-generic-expression
   '(("Functions" "^\\s-*(\\(define\\)" 1)))
 
-(define-derived-mode shen-mode prog-mode "shen"
+(define-derived-mode shen-mode
+  (if (boundp 'prog-mode) prog-mode fundamental-mode) "shen"
   "Major mode for editing Shen code."
   ;; set a variety of local variables
   ((lambda (local-vars)
