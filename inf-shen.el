@@ -1,8 +1,9 @@
 ;;; inferior-shen-mode --- an inferior-shen mode
 
-;; Copyright (C) 2007
+;; Copyright (C) 2007 Michael Ilseman
+;; Copyright (C) 2011 Eric Schulte
 
-;; Author: Michael Ilseman 
+;; Author: Michael Ilseman, Eric Schulte
 ;; Keywords: processes, shen
 
 ;;; Commentary:
@@ -264,8 +265,17 @@ of `inferior-shen-program').  Runs the hooks from
   "Send the current region to the inferior Shen process.
 Prefix argument means switch to the Shen buffer afterwards."
   (interactive "r\nP")
-  (comint-send-region (inferior-shen-proc) start end)
-  (comint-send-string (inferior-shen-proc) "\n")
+  (save-excursion
+    (let ((before-input (progn (goto-char (process-mark (inferior-shen-proc)))
+                               (point))))
+      (comint-send-region (inferior-shen-proc) start end)
+      (comint-send-string (inferior-shen-proc) "\n")
+      (accept-process-output (inferior-shen-proc))
+      (sit-for 0)
+      (set-buffer inferior-shen-buffer)
+      (goto-char before-input)
+      (message "%s" (thing-at-point 'sexp))
+      (goto-char (process-mark (inferior-shen-proc)))))
   (if and-go (switch-to-shen t)))
 
 (defun shen-eval-defun (&optional and-go)
