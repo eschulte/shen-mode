@@ -265,14 +265,13 @@ of `inferior-shen-program').  Runs the hooks from
   "Send the current region to the inferior Shen process.
 Prefix argument means switch to the Shen buffer afterwards."
   (interactive "r\nP")
-  (save-excursion
-    (set-buffer inferior-shen-buffer)
-    (let ((before-input (progn (goto-char (process-mark (inferior-shen-proc)))
-                               (point))))
-      (comint-send-region (inferior-shen-proc) start end)
-      (comint-send-string (inferior-shen-proc) "\n")
-      (accept-process-output (inferior-shen-proc))
-      (sit-for 0)
+  (let ((before-input (marker-position (process-mark (inferior-shen-proc)))))
+    (comint-send-region (inferior-shen-proc) start end)
+    (comint-send-string (inferior-shen-proc) "\n")
+    (accept-process-output (inferior-shen-proc))
+    (sit-for 0)
+    (save-excursion
+      (set-buffer inferior-shen-buffer)
       (goto-char before-input)
       (message "%s" (buffer-substring (point) (point-at-eol)))
       (goto-char (process-mark (inferior-shen-proc)))))
