@@ -196,9 +196,13 @@
 (defvar shen-imenu-generic-expression
   '(("Functions" "^\\s-*(\\(define\\)" 1)))
 
-(define-derived-mode shen-mode
-  (if (boundp 'prog-mode) prog-mode fundamental-mode) "shen"
+;; apparently some versions of Emacs don't have `prog-mode' defined
+(unless (fboundp 'prog-mode)
+  (defalias 'prog-mode 'fundamental-mode))
+
+(define-derived-mode shen-mode prog-mode "shen"
   "Major mode for editing Shen code."
+
   ;; set a variety of local variables
   ((lambda (local-vars)
      (dolist (pair local-vars)
