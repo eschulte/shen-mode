@@ -202,7 +202,7 @@
 
 (define-derived-mode shen-mode prog-mode "shen"
   "Major mode for editing Shen code."
-
+  :syntax-table shen-mode-syntax-table
   ;; set a variety of local variables
   ((lambda (local-vars)
      (dolist (pair local-vars)
