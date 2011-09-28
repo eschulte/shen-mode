@@ -45,7 +45,7 @@
     `(;; definitions
       (,(concat "(\\("
                 (regexp-opt
-                 '("defun" "defmacro" "lambda" "/." "define" "defprolog"))
+                 '("define" "defmacro" "defprolog" "lambda" "/."))
                 "\\)\\>"
                 "[ \t]*(?"
                 "\\(\\sw+\\)?")
@@ -65,6 +65,8 @@
            '("let" "=" "eval-without-reader-macros" "freeze" "type") ; generic
            '("if" "and" "or" "cond")) t) ; boolean
          "\\>") . 1)
+      ;; errors
+      ("(\\(error\\)\\>" 1 font-lock-warning-face)
       ;; built-in
       (,(concat
          "("
@@ -83,7 +85,7 @@
             '(fst snd tupple?)                          ; tuple
             '(@s @v @p)
             '(put get)                  ; property lists
-            '(simple-error error trap-error error-to-string) ; error
+            '(simple-error trap-error error-to-string) ; error
             ;; predicates
             (mapcar
              (lambda (it) (format "%s?" it))
