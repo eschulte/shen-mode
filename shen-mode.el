@@ -45,12 +45,15 @@
     `(;; definitions
       (,(concat "(\\("
                 (regexp-opt
-                 '("define" "defmacro" "defprolog" "lambda" "/."))
+                 '("define" "defmacro" "defprolog" "/."))
                 "\\)\\>"
                 "[ \t]*(?"
                 "\\(\\sw+\\)?")
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
+      ("(\\(lambda\\)\\>[ \t]*(?\\(\\sw+\\)?"
+       (1 font-lock-keyword-face)
+       (2 font-lock-variable-name-face nil t))
       ;; data types
       ("(\\(datatype\\)\\>[ \t]*(?\\(\\sw+\\)?"
        (1 font-lock-keyword-face)
@@ -175,6 +178,7 @@
       edge)))
 
 (put 'let 'shen-indent-function 'shen-let-indent)
+(put 'lambda 'shen-indent-function 1)
 
 (defun shen-current-function ()
   (ignore-errors
