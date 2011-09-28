@@ -42,9 +42,7 @@
 
 (defconst shen-font-lock-keywords
   (eval-when-compile
-    `(;; comments
-      ("\\\\\\*[^\000]*?\\*\\\\" 0 font-lock-comment-face)
-      ;; definitions
+    `(;; definitions
       (,(concat "(\\("
                 (regexp-opt
                  '("defun" "defmacro" "lambda" "/." "define" "defprolog"))
@@ -109,26 +107,21 @@
        1 font-lock-builtin-face)))
   "Default expressions to highlight in Shen mode.")
 
-(defun shen-font-lock-extend-region-comment ()
-  "Move fontification boundaries to contain whole comments."
-  (let ((changed nil))
-    (goto-char font-lock-beg)
-    (when (and (re-search-forward "\\\\\\*" font-lock-end t)
-               (< (match-beginning 0) font-lock-beg))
-      (setq font-lock-beg (match-beginning 0)
-            changed t)
-      (when (and (re-search-forward "\\*\\\\" nil t)
-                 (> (match-end 0) font-lock-end))
-        (setq font-lock-end (match-end 0)
-              changed t)))
-    changed))
-
 (defvar shen-mode-syntax-table
   (let ((table (make-syntax-table)))
-    (modify-syntax-entry ?- "w" table)
-    (modify-syntax-entry ?? "w" table)
-    (modify-syntax-entry ?< "w" table)
-    (modify-syntax-entry ?> "w" table)
+    (dolist (pair '((?@  . "w")
+                    (?_  . "w")
+                    (?-  . "w")
+                    (?+  . "w")
+                    (??  . "w")
+                    (?!  . "w")
+                    (?<  . "w")
+                    (?>  . "w")
+                    (?/  . "w")
+                    ;; comment delimiters
+                    (?\\ . ". 14")
+                    (?*  . ". 23")))
+      (modify-syntax-entry (car pair) (cdr pair) table))
     table)
   "Syntax table to use in shen-mode.")
 
@@ -224,9 +217,7 @@
      (imenu-case-fold-search . t)
      (imenu-generic-expression . ,shen-imenu-generic-expression)
      (mode-name . "Shen")
-     (font-lock-defaults . (shen-font-lock-keywords))))
-  (add-to-list 'font-lock-extend-region-functions
-               'shen-font-lock-extend-region-comment t))
+     (font-lock-defaults . (shen-font-lock-keywords)))))
 
 (add-to-list 'auto-mode-alist '("\\.shen\\'" . shen-mode))
 
