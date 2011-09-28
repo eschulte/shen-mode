@@ -23,12 +23,10 @@
 
 ;;; Commentary:
 
-;; Taken directly from the Qi documentation by Dr. Mark Tarver.
-
 ;; Some of these may actually be Qi functions.
 
 ;;; Code:
-(defvar shen-functions
+(defconst shen-functions
   '((and "boolean --> boolean --> boolean" "Boolean and.")
     (append "(list A) --> (list A) --> (list A)" "Appends two lists into one list.")
     (apply "(A --> B) --> (A --> B)" "Applies a function to an input.")
@@ -153,7 +151,99 @@
     (= "A --> A --> boolean" "Equal to.")
     (== "A --> B --> boolean" "Equal to.")
     (>= "number --> number --> boolean" "Greater than or equal to.")
-    (<= "number --> number --> boolean" "Less than or equal to.")))
+    (<= "number --> number --> boolean" "Less than or equal to."))
+  "Shen functions taken directly from the Qi documentation by Dr. Mark Tarver.")
+
+(defconst shen-more-functions
+  '(aah abort abs-macro abstraction_build abstract_rule add-p
+    add_test adjoin application_build arity aritycheck
+    aritycheck-action aritycheck-name arity-error? assoc
+    assoc-macro assumetype aum aum_to_shen average bad-lambda-call?
+    bind bindv bound? branch-by branch-by-not byte->digit
+    byte->string call call-help call-rest call_the_continuation
+    carriage-return case-form cases-macro catch-cut catchpoint
+    cc_body cc_help cf_help change-pointer-value check-byte
+    check_stream chwild clause_form clauses-to-shen cn-all collect
+    compile compile-error compile-macro compile_prolog_procedure
+    compile_to_kl compile_to_lambda+ compile_to_machine_code
+    complexity complexity_head compose compress-50 cond_code
+    cond-expression cond-form cons_form
+    construct-base-search-clause construct-context
+    construct-premiss-literal construct-recursive-search-clause
+    construct-search-clause construct-search-clauses
+    construct-search-literals construct-side-literals
+    continuation_call copyfromvector copy-vector
+    copy-vector-stage-1 copy-vector-stage-2 core credits csl-help
+    curry curry-type cut cutpoint datatype-error datatype-macro
+    decons decons-string default_semantics defmacro-macro
+    defprolog-macro delay deref dh? digit-byte? double->singles
+    doubleunderline? dump-target <e> ebr embed-and em_help
+    encode-choices end-of-comment? ephemeral_variable?
+    err-condition errordef errormaxinfs eval-cons exclamation
+    explicit_modes explode-string expt extract_free_vars
+    extract-pvars extract_vars *extraspecial* extraspecial? F fail
+    fail_if fail-if f_error fillvector find find-past-inputs
+    first_n fix-help flatten floor floor-loop format form-rule
+    free_variable_check free_variable_warnings funcall fwhen get
+    get-profile grammar_symbol? group_clauses hash hat hdv
+    head_abstraction higher-order-code identical incinfs
+    initialise_arity_table initialise_environment initialise-prolog
+    input-track insert-default insert_deref insert_lazyderef
+    insert_modes insert-predicate insert-prolog-variables
+    insert-prolog-variables-help insert-tracking-code interror
+    intmake-string intoutput intprolog intprolog-help
+    intprolog-help-help i/o-macro jump_stream jump_stream?
+    kl-to-lisp lazyderef left-round left-rule legitimate-term?
+    length-h let-macro limit line linearise linearise-clause
+    linearise_help linearise_X lineread-loop lisp-or lisp_test
+    list_stream? list_stream list_variables load-help loop lzy=
+    lzy== lzy=! macroexpand make-key make_mu_application maplispsym
+    maxinfexceeded? measure&return mk-pvar mod mode-ify modh
+    m_prolog_to_s-prolog_predicate ms-h multiples multiple-set
+    mult_subst mu_reduction <name> nest-disjunct nest-lambda
+    nest-lambda-help newcontinuation newline newline-string newpv
+    next-50 nl nl-macro normalise-type normalise-type-help
+    normalise-X ob->str occurrences occurs? optimise-selectors
+    optimise-selectors-help output-track package-contents packaged?
+    packageh package-macro parameters pause-for-user percent
+    placeholder? placeholder placeholder-help? placeholders posint?
+    post prbytes pre prefix? pretty-type print-past-inputs
+    procedure_name process-datatype process-tree product
+    profile-func profile-help prolog-aritycheck prolog_constant?
+    prolog-error prolog-form prolog-macro prolog->shen prompt
+    pushnew put put/get-macro put-profile pvar pvar? rcons_form
+    read read-char-h read-error read-evaluate-print
+    read-file-as-bytelist read-file-as-bytelist-help
+    read-file-as-string reassemble record-source
+    recursive_cons_form recursive_descent recursively-print reduce
+    reduce_help relay-error remember-datatype remove-bar
+    remove_modes remove-synonyms remtype resizeprocessvector
+    resize-vector retrieve-from-history-if-needed return returns
+    reverse_help rfas-h right->left right-rule round_to_6_places
+    rule->horn-clause rule->horn-clause-body rule->horn-clause-head
+    rules->horn-clauses @s S same_predicate? selectors-from
+    semantics sh? shen ShenDef shen->kl shen-out shen-syntax-error
+    show show-assumptions show-p sigf singleunderline? @s-macro
+    snd-or-fail space spaces special?
+    specialised_run_newtons_method split_cc_rule split_cc_rules
+    s-prolog s-prolog_clause s-prolog_literal
+    start-new-prolog-process stinput store-arity +string?
+    string->bytes subst succeeds? sum symbol-byte->string
+    synonyms-help synonyms-macro syntax sys-error sysfunc?
+    sys-print systemf tab tc? terminal? terpri-or-read-char
+    timer-macro tlv tlv-help toplevel toplevel_evaluate toplineread
+    toplineread_loop tracked? track-function tree trim-gubbins
+    tuple tuple-up typecheck typecheck-and-evaluate
+    typecheck-and-load typedf? type-insecure-rule-error-message
+    typetable unbindv unify unify! unit-string->byte unwind-types
+    update_history @v valvector variancy-test variant? <-vector
+    +vector? +vector vector-> vector? vector->list vector-macro
+    @v-help walk write-object-code-to-file xmapcan yacc yacc_cases
+    yacc-macro yacc->shen)
+  "More Shen functions extracted from the Shen source code.
+Function names extracted through running the following in the
+\"Shen Source\" directory.
+  $ rgrep define *|awk '{print $2}'|sort|uniq")
 
 (defun shen-functions-as-html ()
   (concat "<html><body>\n"

@@ -91,7 +91,8 @@
                        integer number provable rational solved string symbol
                        tuple variable))
             ;; misc functions
-            (mapcar #'car shen-functions)))
+            (mapcar #'car shen-functions)
+            shen-more-functions))
           t)
          "\\>")
        1 font-lock-builtin-face)
