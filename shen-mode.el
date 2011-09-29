@@ -179,6 +179,7 @@
 
 (put 'let 'shen-indent-function 'shen-let-indent)
 (put 'lambda 'shen-indent-function 1)
+(put 'package 'shen-indent-function 2)
 
 (defun shen-current-function ()
   (ignore-errors
