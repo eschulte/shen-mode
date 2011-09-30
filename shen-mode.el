@@ -40,12 +40,14 @@
    (make-sparse-keymap))
   "Currently just inherits from `lisp-mode-shared-map'.")
 
+
+;;; Fontification
 (defconst shen-font-lock-keywords
   (eval-when-compile
     `(;; definitions
       (,(concat "(\\("
                 (regexp-opt
-                 '("define" "defmacro" "defprolog" "/."))
+                 '("define" "defmacro" "defprolog" "/." "synonyms"))
                 "\\)\\>"
                 "[ \t]*(?"
                 "\\(\\sw+\\)?")
@@ -131,6 +133,8 @@
     table)
   "Syntax table to use in shen-mode.")
 
+
+;;; Indentation
 ;; Copied from qi-mode, which in turn is from scheme-mode and from lisp-mode
 (defun shen-indent-function (indent-point state)
   (let ((normal-indent (current-column)))
@@ -172,15 +176,21 @@
   (let ((edge (- (current-column) 2)))
     (goto-char indent-point) (skip-chars-forward " \t")
     (if (looking-at "[-a-zA-Z0-9+*/?!@$%^&_:~]")
-      ;; deeper indent because we're still defining local variables
-      (lisp-indent-specform 5 state indent-point normal-indent)
+        ;; deeper indent because we're still defining local variables
+        (lisp-indent-specform 5 state indent-point normal-indent)
       ;; shallow indent because we're in the body
       edge)))
 
+(defun shen-package-indent (state indent-point normal-indent)
+  (- (current-column) 8))
+
 (put 'let 'shen-indent-function 'shen-let-indent)
 (put 'lambda 'shen-indent-function 1)
-(put 'package 'shen-indent-function 2)
+(put 'package 'shen-indent-function 'shen-package-indent)
+(put 'datatype 'shen-indent-function 1)
 
+
+;;; Function documentation
 (defun shen-current-function ()
   (ignore-errors
     (save-excursion
@@ -199,6 +209,8 @@
 (defvar shen-imenu-generic-expression
   '(("Functions" "^\\s-*(\\(define\\)" 1)))
 
+
+;;; Major mode definition
 ;; apparently some versions of Emacs don't have `prog-mode' defined
 (unless (fboundp 'prog-mode)
   (defalias 'prog-mode 'fundamental-mode))
