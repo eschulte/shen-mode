@@ -55,7 +55,7 @@
     `(;; definitions
       (,(concat "(\\("
                 (regexp-opt
-                 '("define" "defmacro" "defprolog" "/." "synonyms"))
+                 '("define" "defmacro" "defprolog" "/." "synonyms" "defcc"))
                 "\\)\\>"
                 "[ \t]*(?"
                 "\\(\\sw+\\)?")
