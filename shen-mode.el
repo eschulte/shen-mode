@@ -202,10 +202,11 @@
 (defun shen-mode-eldoc ()
   (let ((func (assoc (intern (or (shen-current-function) "")) shen-functions)))
     (when func
-      (format "%s[%s]: %s"
+      (format "%s%s:%s"
               (propertize (symbol-name (car func))
                           'face 'font-lock-function-name-face)
-              (cadr func) (caddr func)))))
+              (if (cadr func)  (concat "[" (cadr func) "]") "")
+              (if (caddr func) (concat " " (caddr func)) "")))))
 
 (defvar shen-imenu-generic-expression
   '(("Functions" "^\\s-*(\\(define\\)" 1)))
