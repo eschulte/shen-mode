@@ -28,6 +28,7 @@
 
 ;;; Code:
 (require 'lisp-mode)
+(require 'cc-mode)
 (require 'shen-functions)
 (require 'imenu)
 
@@ -37,8 +38,14 @@
   :group 'shen)
 
 (defvar shen-mode-map
-  ((lambda (map) (set-keymap-parent map lisp-mode-shared-map) map)
-   (make-sparse-keymap))
+  (let ((map (make-sparse-keymap)))
+    (set-keymap-parent map lisp-mode-shared-map)
+    (substitute-key-definition 'indent-new-comment-line
+                               'c-indent-new-comment-line
+                               map global-map)
+    (substitute-key-definition 'fill-paragraph 'c-fill-paragraph
+                               map global-map)
+    map)
   "Currently just inherits from `lisp-mode-shared-map'.")
 
 
