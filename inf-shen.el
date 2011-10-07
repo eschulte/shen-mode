@@ -290,7 +290,6 @@ Prefix argument means switch to the Shen buffer afterwards."
       (skip-chars-backward " \t\n\r\f") ;  Makes allegro happy
       (let ((end (point)))
         (beginning-of-defun)
-        (message "sending %S" (buffer-substring (point) end))
         (setq result (shen-eval-region (point) end))))
     (if and-go (switch-to-shen t))
     result))
