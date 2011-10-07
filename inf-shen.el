@@ -265,7 +265,8 @@ of `inferior-shen-program').  Runs the hooks from
   "Send the current region to the inferior Shen process.
 Prefix argument means switch to the Shen buffer afterwards."
   (interactive "r\nP")
-  (let ((before-input (marker-position (process-mark (inferior-shen-proc)))))
+  (let ((before-input (marker-position (process-mark (inferior-shen-proc))))
+        result)
     (comint-send-region (inferior-shen-proc) start end)
     (comint-send-string (inferior-shen-proc) "\n")
     (accept-process-output (inferior-shen-proc))
@@ -273,21 +274,26 @@ Prefix argument means switch to the Shen buffer afterwards."
     (save-excursion
       (set-buffer inferior-shen-buffer)
       (goto-char before-input)
-      (message "%s" (buffer-substring (point) (point-at-eol)))
-      (goto-char (process-mark (inferior-shen-proc)))))
-  (if and-go (switch-to-shen t)))
+      (setq result (buffer-substring (point) (point-at-eol)))
+      (message "%s" result)
+      (goto-char (process-mark (inferior-shen-proc))))
+    (if and-go (switch-to-shen t))
+    result))
 
 (defun shen-eval-defun (&optional and-go)
   "Send the current defun to the inferior Shen process.
 Prefix argument means switch to the Shen buffer afterwards."
   (interactive "P")
-  (save-excursion
-    (end-of-defun)
-    (skip-chars-backward " \t\n\r\f") ;  Makes allegro happy
-    (let ((end (point)))
-      (beginning-of-defun)
-      (shen-eval-region (point) end)))
-  (if and-go (switch-to-shen t)))
+  (let (result)
+    (save-excursion
+      (end-of-defun)
+      (skip-chars-backward " \t\n\r\f") ;  Makes allegro happy
+      (let ((end (point)))
+        (beginning-of-defun)
+        (message "sending %S" (buffer-substring (point) end))
+        (setq result (shen-eval-region (point) end))))
+    (if and-go (switch-to-shen t))
+    result))
 
 (defun shen-eval-last-sexp (&optional and-go)
   "Send the previous sexp to the inferior Shen process.
