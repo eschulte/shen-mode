@@ -261,12 +261,32 @@ of `inferior-shen-program').  Runs the hooks from
 ;;;###autoload
 (defalias 'run-shen 'inferior-shen)
 
+(defun shen-remember-functions (start end)
+  "Add functions defined between START and END to `shen-functions'."
+  (interactive "r")
+  (flet ((clean (text)
+                (when text
+                  (set-text-properties 0 (length text) nil text) text)))
+    (save-excursion
+      (goto-char start)
+      (let ((re (concat
+                 "^(define[ \t]+\\(.+\\)[\n\r]" ; function name
+                 "\\([ \t]*\\\\\\*[ \t]*\\([^\000]+?\\)\\*\\\\\\)?" ; doc
+                 "[\n\r]?[ \t]*\\({\\(.+\\)}\\)?"))) ; type
+        (while (re-search-forward re end t)
+          (let ((name (intern (match-string 1)))
+                (doc (clean (match-string 3)))
+                (type (clean (match-string 5))))
+            (setq shen-functions
+                  (cons (list name doc type) shen-functions))))))))
+
 (defun shen-eval-region (start end &optional and-go)
   "Send the current region to the inferior Shen process.
 Prefix argument means switch to the Shen buffer afterwards."
   (interactive "r\nP")
   (let ((before-input (marker-position (process-mark (inferior-shen-proc))))
         result)
+    (shen-remember-functions start end)
     (comint-send-region (inferior-shen-proc) start end)
     (comint-send-string (inferior-shen-proc) "\n")
     (accept-process-output (inferior-shen-proc))
