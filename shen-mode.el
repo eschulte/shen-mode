@@ -28,7 +28,6 @@
 
 ;;; Code:
 (require 'lisp-mode)
-(require 'cc-mode)
 (require 'imenu)
 
 (defcustom shen-mode-hook '(turn-on-eldoc-mode)
@@ -39,11 +38,6 @@
 (defvar shen-mode-map
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map lisp-mode-shared-map)
-    (substitute-key-definition 'indent-new-comment-line
-                               'c-indent-new-comment-line
-                               map global-map)
-    (substitute-key-definition 'fill-paragraph 'c-fill-paragraph
-                               map global-map)
     map)
   "Currently just inherits from `lisp-mode-shared-map'.")
 
@@ -418,6 +412,7 @@
      (comment-column . 32)
      (parse-sexp-ignore-comments . t)
      (comment-use-global-state . nil)
+     (comment-multi-line . t)
      (eldoc-documentation-function . shen-mode-eldoc)
      (imenu-case-fold-search . t)
      (imenu-generic-expression . ,shen-imenu-generic-expression)
