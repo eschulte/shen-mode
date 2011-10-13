@@ -271,14 +271,13 @@ of `inferior-shen-program').  Runs the hooks from
       (goto-char start)
       (let ((re (concat
                  "^(define[ \t]+\\(.+\\)[\n\r]" ; function name
-                 "\\([ \t]*\\\\\\*[ \t]*\\([^\000]+?\\)\\*\\\\\\)?" ; doc
+                 "\\([ \t]*\\\\\\*[ \t]*\\([^\000]+?\\)[ \t]*\\*\\\\\\)?" ; doc
                  "[\n\r]?[ \t]*\\({\\(.+\\)}\\)?"))) ; type
         (while (re-search-forward re end t)
           (let ((name (intern (match-string 1)))
                 (doc (clean (match-string 3)))
                 (type (clean (match-string 5))))
-            (setq shen-functions
-                  (cons (list name doc type) shen-functions))))))))
+            (add-to-list 'shen-functions (list name type doc))))))))
 
 (defun shen-eval-region (start end &optional and-go)
   "Send the current region to the inferior Shen process.
