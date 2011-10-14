@@ -25,13 +25,9 @@
 ;; the hooks available for customising it, see the file comint.el.
 ;; For further information on inferior-shen mode, see the comments below.
 
-;; Needs fixin:
-
 ;;; Code:
-
 (require 'comint)
 (require 'shen-mode)
-
 
 ;;;###autoload
 (defvar inferior-shen-filter-regexp "\\`\\s *\\(:\\(\\w\\|\\s_\\)\\)?\\s *\\'"
@@ -261,6 +257,11 @@ of `inferior-shen-program').  Runs the hooks from
 ;;;###autoload
 (defalias 'run-shen 'inferior-shen)
 
+(defcustom shen-pre-eval-hook '()
+  "Hook to run on code before sending it to the inferior-shen-process.
+Functions on this hook will be called with an active region
+containing the shen source code about to be evaluated.")
+
 (defun shen-remember-functions (start end)
   "Add functions defined between START and END to `shen-functions'."
   (interactive "r")
@@ -279,13 +280,16 @@ of `inferior-shen-program').  Runs the hooks from
                 (type (clean (match-string 5))))
             (add-to-list 'shen-functions (list name type doc))))))))
 
+(add-hook 'shen-pre-eval-hook #'shen-remember-functions)
+
 (defun shen-eval-region (start end &optional and-go)
   "Send the current region to the inferior Shen process.
 Prefix argument means switch to the Shen buffer afterwards."
   (interactive "r\nP")
   (let ((before-input (marker-position (process-mark (inferior-shen-proc))))
         result)
-    (shen-remember-functions start end)
+    
+    (run-hook-with-args 'shen-pre-eval-hook start end)
     (comint-send-region (inferior-shen-proc) start end)
     (comint-send-string (inferior-shen-proc) "\n")
     (accept-process-output (inferior-shen-proc))
@@ -363,7 +367,6 @@ With argument, positions cursor at end of buffer."
 ;;; these commands are redundant. But they are kept around for the user
 ;;; to bind if he wishes, for backwards functionality, and because it's
 ;;; easier to type C-c e than C-u C-c C-e.
-
 (defun shen-eval-region-and-go (start end)
   "Send the current region to the inferior Shen, and switch to its buffer."
   (interactive "r")
@@ -533,7 +536,6 @@ The value is nil if it can't find one."
 
 ;;; Documentation functions: fn and var doc, arglist, and symbol describe.
 ;;; ======================================================================
-
 (defun shen-show-function-documentation (fn)
   "Send a command to the inferior Shen to give documentation for function FN.
 See variable `shen-function-doc-command'."
@@ -579,16 +581,5 @@ This is a good place to put keybindings.")
 
 (run-hooks 'inferior-shen-load-hook)
 
-;;; CHANGE LOG
-;;; ===========================================================================
-;;; 2007-5-28
-;;;   - added new inferior-shen-mode
-;;;   - added error message highlighting
-;;;   - changed from using inferior-lisp-mode to using
-;;;     new inferior-shen-mode
-
-
-
 (provide 'inf-shen)
-
-
+;;; inf-shen.el ends here
