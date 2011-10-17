@@ -291,6 +291,13 @@ containing the shen source code about to be evaluated.")
                  (while (/= 0 (- (point) (forward-list)))) t)
           (scan-error (signal 'scan-error '("Parentheses not balanced."))))))))
 
+(add-hook 'shen-pre-eval-hook
+          (lambda (start end)
+            (condition-case err (check-balanced-parens start end)
+              (error (unless (y-or-n-p (format "%s Eval anyway ?"
+                                               (error-message-string err)))
+                       (signal 'scan-error err))))))
+
 (defun shen-eval-region (start end &optional and-go)
   "Send the current region to the inferior Shen process.
 Prefix argument means switch to the Shen buffer afterwards."
