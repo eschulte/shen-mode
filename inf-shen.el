@@ -282,6 +282,15 @@ containing the shen source code about to be evaluated.")
 
 (add-hook 'shen-pre-eval-hook #'shen-remember-functions)
 
+(defun check-balanced-parens (start end)
+  "Check if parentheses in the region are balanced."
+  (save-restriction (save-excursion
+    (let ((deactivate-mark nil))
+      (condition-case c
+          (progn (narrow-to-region start end) (goto-char (point-min))
+                 (while (/= 0 (- (point) (forward-list)))) t)
+          (scan-error (signal 'scan-error '("Parentheses not balanced."))))))))
+
 (defun shen-eval-region (start end &optional and-go)
   "Send the current region to the inferior Shen process.
 Prefix argument means switch to the Shen buffer afterwards."
