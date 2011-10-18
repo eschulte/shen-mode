@@ -1,12 +1,11 @@
 An Emacs major mode for shen.
 
 For more information on shen see
-  http://www.lambdassociates.org/specification/shen_1.8.htm
+  http://www.shenlanguage.org
 
 To use put something like the following in your .emacs
     (require 'shen-mode)
     (require 'inf-shen) ; <- for interaction with an external shen process
-    (add-hook 'shen-mode-hook 'paredit-mode) ; <- entirely optional
 
 Shen-mode.el is now included in the GNU ELPA http://elpa.gnu.org/ and
 may be installed in new versions of Emacs using M-x list-packages.

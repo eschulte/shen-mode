@@ -24,7 +24,10 @@
 
 ;;; Commentary:
 
-;; A minor mode for editing shen source code.
+;; A minor mode for editing shen source code.  Shen is a modern lisp
+;; dialect with support for functional and declarative programming,
+;; pattern matching and a very powerful type system.  See the
+;; following for more information on Shen. http://www.shenlanguage.org
 
 ;;; Code:
 (require 'lisp-mode)
