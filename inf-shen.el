@@ -25,6 +25,9 @@
 ;; the hooks available for customising it, see the file comint.el.
 ;; For further information on inferior-shen mode, see the comments below.
 
+(eval-when-compile
+  (require 'cl))
+
 ;;; Code:
 (require 'comint)
 (require 'shen-mode)
