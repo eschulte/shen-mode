@@ -308,8 +308,9 @@
                     (?>  . "w")
                     (?/  . "w")
                     ;; comment delimiters
-                    (?\\ . ". 14")
-                    (?*  . ". 23")))
+                    (?\\ . ". 124b")
+                    (?*  . ". 23")
+                    (?\n . "> b")))
       (modify-syntax-entry (car pair) (cdr pair) table))
     table)
   "Syntax table to use in shen-mode.")
