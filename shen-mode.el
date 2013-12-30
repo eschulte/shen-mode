@@ -398,6 +398,7 @@
 (unless (fboundp 'prog-mode)
   (defalias 'prog-mode 'fundamental-mode))
 
+;;;###autoload
 (define-derived-mode shen-mode prog-mode "shen"
   "Major mode for editing Shen code."
   :syntax-table shen-mode-syntax-table
@@ -423,6 +424,7 @@
      (mode-name . "Shen")
      (font-lock-defaults . (shen-font-lock-keywords)))))
 
+;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.shen\\'" . shen-mode))
 
 (provide 'shen-mode)
